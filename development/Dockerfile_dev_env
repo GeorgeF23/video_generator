@@ -15,4 +15,11 @@ RUN apt update && apt install \
 RUN pip install --upgrade pip && \
     pip install --upgrade awscli
 
+# Install npm global packages
+RUN npm i -g @nestjs/cli
+
+# Create user
+RUN useradd -r -u 1000 developer
+USER developer
+
 CMD /bin/bash

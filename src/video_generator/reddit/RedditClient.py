@@ -9,6 +9,7 @@ class RedditClient:
     def __init__(self):
         self.headers = {'User-Agent': APP_NAME}
         access_token = self.login()
+        self.headers = {**self.headers, **{'Authorization': f"bearer {access_token}"}}
 
     def login(self):
         auth = requests.auth.HTTPBasicAuth(REDDIT_CLIENT_ID, REDDIT_SECRET)

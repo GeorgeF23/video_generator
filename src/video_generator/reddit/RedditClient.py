@@ -1,6 +1,7 @@
-import praw
+import os
+
 
 class RedditClient:
 
     def __init__(self):
-        pass
+        print(os.environ['REDDIT_USERNAME'])

@@ -1,2 +1,2 @@
 awscli
-praw==7.6.0
+python-dotenv

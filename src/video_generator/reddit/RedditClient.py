@@ -1,5 +1,7 @@
 import requests
 import logging
+
+from video_generator.reddit.exceptions import RedditAuthenticaionError
 from . import *
 
 class RedditClient:
@@ -19,4 +21,8 @@ class RedditClient:
         res_json = res.json()
         token = res_json.get('access_token')
         logging.debug(f'Got login response from REDDIT: {res_json}')
+
+        if not token:
+            raise RedditAuthenticaionError(f'Error while authentication to Reddit: {res_json}')
+
         return token

@@ -1,0 +1,2 @@
+class RedditAuthenticaionError(Exception):
+    pass

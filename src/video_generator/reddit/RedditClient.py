@@ -1,7 +1,12 @@
 import requests
+import logging
 from . import *
 
 class RedditClient:
+
+    def __init__(self):
+        self.headers = {'User-Agent': APP_NAME}
+        access_token = self.login()
 
     def login(self):
         auth = requests.auth.HTTPBasicAuth(REDDIT_CLIENT_ID, REDDIT_SECRET)
@@ -12,11 +17,6 @@ class RedditClient:
         res = requests.post('https://www.reddit.com/api/v1/access_token',
                             auth=auth, data=data, headers=self.headers)
         res_json = res.json()
-
-        return res_json.get('access_token')
-
-    def __init__(self):
-        self.headers = {'User-Agent': APP_NAME}
-        access_token = self.login()
-        print(access_token)
-        pass
+        token = res_json.get('access_token')
+        logging.debug(f'Got login response from REDDIT: {res_json}')
+        return token

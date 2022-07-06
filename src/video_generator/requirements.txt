@@ -1,2 +1,3 @@
 awscli
 python-dotenv
+urllib==1.26.9

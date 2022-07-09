@@ -2,6 +2,8 @@ import requests
 import logging
 
 from reddit.exceptions import RedditAuthenticaionError
+from common.html_beautify.html_beautify import beautify
+from reddit.PostData import PostDataDto
 from . import *
 
 class RedditClient:
@@ -28,3 +30,17 @@ class RedditClient:
 
         logging.info('Successfully logged into Reddit')
         return token
+
+    def get_posts(self, subreddit: str, count: int):
+        res = requests.get(f'https://oauth.reddit.com/r/{subreddit}/hot', headers=self.headers, params={'limit': f'{count}'})
+        posts = []
+
+        for post in res.json()['data']['children']:
+            id = post['data']['permalink']
+            title = post['data']['title']
+            content = beautify(post['data']['selftext_html'])
+            post_data = PostDataDto(id, title, content)
+
+            posts.append(post_data)
+            
+        print(posts)

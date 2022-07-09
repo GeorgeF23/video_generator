@@ -8,3 +8,4 @@ logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
 
 r = RedditClient()
+r.get_posts('confessions', 2)

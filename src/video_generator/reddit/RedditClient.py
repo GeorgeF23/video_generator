@@ -33,14 +33,18 @@ class RedditClient:
 
     def get_posts(self, subreddit: str, count: int):
         res = requests.get(f'https://oauth.reddit.com/r/{subreddit}/hot', headers=self.headers, params={'limit': f'{count}'})
+        res.raise_for_status()
+
         posts = []
-
         for post in res.json()['data']['children']:
-            id = post['data']['permalink']
-            title = post['data']['title']
-            content = beautify(post['data']['selftext_html'])
-            post_data = PostDataDto(id, title, content)
+            try:
+                id = post['data']['permalink']
+                title = post['data']['title']
+                content = beautify(post['data']['selftext_html'])
+                post_data = PostDataDto(id, title, content)
 
-            posts.append(post_data)
-            
-        print(posts)
+                posts.append(post_data)
+            except:
+                logging.debug('Got an invalid post')
+
+        return posts

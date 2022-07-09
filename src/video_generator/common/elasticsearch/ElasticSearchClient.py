@@ -1,6 +1,7 @@
 from dataclasses import asdict
 import hashlib
 import os
+import pdb
 from elasticsearch import Elasticsearch
 
 class ElasticSearchClient:
@@ -23,8 +24,6 @@ class ElasticSearchClient:
             data = [data]
         
         for d in data:
-            d_id = id(d)
-
-            self.es_client.index(index=index_name, id=hashlib.md5(d_id.encode()).hexdigest(), body=asdict(d))
+            self.es_client.index(index=index_name, id=id(d), body=asdict(d))
         
         self.es_client.indices.refresh(index_name)

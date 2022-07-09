@@ -1,3 +1,4 @@
+import hashlib
 import pdb
 import requests
 import logging
@@ -40,7 +41,7 @@ class RedditClient:
         posts = []
         for post in res.json()['data']['children']:
             try:
-                id = post['data']['permalink']
+                id = hashlib.md5(post['data']['permalink'].encode()).hexdigest()
                 title = post['data']['title']
                 content = beautify(post['data']['selftext_html'])
                 post_data = PostDataDto(id, title, content)

@@ -1,7 +1,7 @@
 import requests
 import logging
 
-from video_generator.reddit.exceptions import RedditAuthenticaionError
+from reddit.exceptions import RedditAuthenticaionError
 from . import *
 
 class RedditClient:
@@ -26,4 +26,5 @@ class RedditClient:
         if not token:
             raise RedditAuthenticaionError(f'Error while authentication to Reddit: {res_json}')
 
+        logging.info('Successfully logged into Reddit')
         return token

@@ -1,9 +1,11 @@
+import pdb
 import requests
 import logging
 
 from reddit.exceptions import RedditAuthenticaionError
 from common.html_beautify.html_beautify import beautify
 from reddit.PostData import PostDataDto
+from reddit.filtering_pipeline.FilterPipeline import FilterPipeline
 from . import *
 
 class RedditClient:
@@ -31,7 +33,7 @@ class RedditClient:
         logging.info('Successfully logged into Reddit')
         return token
 
-    def get_posts(self, subreddit: str, count: int):
+    def fetch_posts(self, subreddit: str, count: int):
         res = requests.get(f'https://oauth.reddit.com/r/{subreddit}/hot', headers=self.headers, params={'limit': f'{count}'})
         res.raise_for_status()
 
@@ -48,3 +50,9 @@ class RedditClient:
                 logging.debug('Got an invalid post')
 
         return posts
+
+    def get_posts(self, subreddit: str, count: int):
+        posts = self.fetch_posts(subreddit, count)
+        filter_pipeline = FilterPipeline(posts)
+
+        return filter_pipeline.get_results()

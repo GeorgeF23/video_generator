@@ -1,9 +1,57 @@
-#### Installation
+# Video generator
+The application's goal is to create short (maybe long in the future) videos with a game in the background and a reddit text (maybe more sources in the future) over it.
+
+### Table of contents
+- [Video generator](#video-generator)
+    + [1.Setup](#1setup)
+      - [1.1 Installation](#11-installation)
+      - [1.2 Running locally](#12-running-locally)
+    + [2. Services](#2-services)
+      - [2.1 Reddit API](#21-reddit-api)
+
+### 1.Setup
+#### 1.1 Installation
 
 ```bash
-sudo apt install git bash curl python3 python3-pip wget curl nodejs npm
-sudo snap install ngrok
+sudo apt install git bash curl python3 python3-pip wget curl
 pip install --upgrade pip
 pip install --upgrade awscli
 pip install -r src/video_generator/requirements.txt
 ```
+
+#### 1.2 Running locally
+
+This application will run on AWS so to run locally you need to start some of them. 
+To do that, run the 'start-localstack.sh' script that will launch some dockers containing ElasticSearch, Kibana (and more).
+
+### 2. Services
+
+The application is split among many services, all doing some independent work that is merged to create the final video.
+The services that are involved in the video generation will run on an AWS lambda function.
+
+#### 2.1 Reddit API
+
+The main text that will be overlayed on the video comes from Reddit through Reddit's API.
+
+The python reddit module exposes a RedditClient class that will be used to fetch posts from the reddit API. In addition, the PostData class will be used to store a reddit post data.
+
+The flow is:
+* a login request will be sent to reddit(https://www.reddit.com/api/v1/access_token) among some credentials
+* upon sucessful login, reddit will send back an access token that will be used to make further interogations
+* to fetch the posts, a request is made to https://oauth.reddit.com/r/{subreddit}/hot among with a number of posts to fetch added
+* the received posts are filtered through a pipeline
+
+The filter pipeline contains the following filters:
+* CharacterCount - removes posts that are too short or too long
+* UnusedPost - removes posts that were used in the past (used posts are stored in ElasticSearch)
+
+The enviornment variables used by this service are (* are mandatory):
+
+* REDDIT_CLIENT_ID* - obtained upon registering a Reddit APP
+* REDDIT_SECRET* - obtained upon registering a Reddit APP
+* REDDIT_USERNAME* - username of reddit account
+* REDDIT_PASSWORD* - password of reddit account
+* ELASITC_HOST* - URL of the elasticsearch service
+* REDDIT_POSTS_INDEX* - index where used reddit posts will be stored
+* CHARACTERS_MIN_COUNT - minimum character count of post
+* CHARACTERS_MAX_COUNT - maximum character count of post

@@ -6,8 +6,10 @@ import pdb
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 
+
 class ElasticSearchClient:
-    
+    """ Singleton class used as an interface between the application and elasticsearch
+    """
     instance = None
     
     def __init__(self):
@@ -16,12 +18,20 @@ class ElasticSearchClient:
 
     @staticmethod
     def get_instance():
+        """ Returns an instance of this class
+        """
         if ElasticSearchClient.instance is None:
             ElasticSearchClient.instance = ElasticSearchClient()
         
         return ElasticSearchClient.instance
 
     def upload(self, data, id, index_name):
+        """ Uploads a single document to elasticsearch
+
+            * data -> object that will be uploaded
+            * id -> function that returns the id of the object. Signature: id(data: object) -> the id
+            * index_name -> destination index
+        """
         if type(data) is not list:
             data = [data]
         
@@ -31,6 +41,13 @@ class ElasticSearchClient:
         self.es_client.indices.refresh(index_name)
 
     def get_by_id(self, id, index_name):
+        """ Fetches an object by it's id
+
+            * id -> id of object to fetch
+            * index_name -> index
+
+            Returns: found object or None
+        """
         try:
             document = self.es_client.get(index_name, id)
             return document['_source']

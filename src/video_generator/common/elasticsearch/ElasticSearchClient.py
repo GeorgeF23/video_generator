@@ -36,6 +36,7 @@ class ElasticSearchClient:
             return document['_source']
         except NotFoundError:
             logging.error(f'Document with id: {id} does not exist in index {index_name}')
+            return None
         except Exception as e:
             logging.error(f'Unknown error while searching in ES: {e}')
         

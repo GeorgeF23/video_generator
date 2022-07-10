@@ -10,9 +10,9 @@ logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
 
 r = RedditClient()
-posts = r.get_posts('confessions', 2)
+posts = r.get_posts('confessions', 7)
+print(posts)
+print(len(posts))
 
 es_client = ElasticSearchClient.get_instance()
 es_client.upload(posts, lambda post: post.id, 'reddit_posts')
-
-print(es_client.get_by_id('f3e2baa2a6e20ccb62698bfdd2161fd3', 'reddit_posts'))

@@ -1,8 +1,10 @@
 from dataclasses import asdict
 import hashlib
+import logging
 import os
 import pdb
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError
 
 class ElasticSearchClient:
     
@@ -27,3 +29,13 @@ class ElasticSearchClient:
             self.es_client.index(index=index_name, id=id(d), body=asdict(d))
         
         self.es_client.indices.refresh(index_name)
+
+    def get_by_id(self, id, index_name):
+        try:
+            document = self.es_client.get(index_name, id)
+            return document['_source']
+        except NotFoundError:
+            logging.error(f'Document with id: {id} does not exist in index {index_name}')
+        except Exception as e:
+            logging.error(f'Unknown error while searching in ES: {e}')
+        

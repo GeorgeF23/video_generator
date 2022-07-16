@@ -3,6 +3,7 @@ from botocore.exceptions import BotoCoreError, ClientError
 import os
 from tempfile import gettempdir
 from contextlib import closing
+from uuid import uuid4
 import logging
 
 class SpeechClient():
@@ -18,7 +19,7 @@ class SpeechClient():
     
     def get_text_to_speech(self, text: str) -> str | None:
         try:
-            response = self.polly.synthesize_speech(Text=text, OutputFormat="mp3", VoiceId="Matthew")
+            response = self.polly.synthesize_speech(Engine="neural", Text=text, OutputFormat="mp3", VoiceId="Matthew")
         except (BotoCoreError, ClientError) as error:
             logging.error(f'[SpeechClient] Got an error while converting text to speech: {error}')
             return None
@@ -26,7 +27,7 @@ class SpeechClient():
         # Access the audio stream from the response
         if "AudioStream" in response:
             with closing(response["AudioStream"]) as stream:
-                output = os.path.join(gettempdir(), "speech.mp3")
+                output = os.path.join(gettempdir(), uuid4().hex + ".mp3")
 
                 try:
                     with open(output, "wb") as file:

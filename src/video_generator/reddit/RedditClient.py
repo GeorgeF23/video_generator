@@ -1,5 +1,6 @@
 import hashlib
 import pdb
+from typing import List
 import requests
 import logging
 
@@ -52,7 +53,7 @@ class RedditClient:
 
         return posts
 
-    def get_posts(self, subreddit: str, count: int):
+    def get_posts(self, subreddit: str, count: int) -> List[PostDataDto]:
         posts = self.fetch_posts(subreddit, count)
         filter_pipeline = FilterPipeline(posts)
 

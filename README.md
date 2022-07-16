@@ -8,9 +8,12 @@ The application's goal is to create short (maybe long in the future) videos with
       - [1.2 Running locally](#12-running-locally)
     + [2. Services](#2-services)
       - [2.1 Reddit API](#21-reddit-api)
+      - [2.2 Text 2 speech](#22-text-2-speech)
 
 ### 1.Setup
 #### 1.1 Installation
+
+Install aws cli from the aws website and configure it with 'aws configure' by introducing the IAM credentials.
 
 ```bash
 sudo apt install git bash curl python3 python3-pip wget curl
@@ -55,3 +58,11 @@ The enviornment variables used by this service are (* are mandatory):
 * REDDIT_POSTS_INDEX* - index where used reddit posts will be stored
 * CHARACTERS_MIN_COUNT - minimum character count of post
 * CHARACTERS_MAX_COUNT - maximum character count of post
+
+#### 2.2 Text 2 speech
+
+For text to speech, AWS Polly is used using the voice 'Matthew' (maybe will make this customizable in the future).
+Most of the voices have 2 engines: 'neural' which is better, but more expensive and 'standard'.
+There is a free tier available: 1 million chars/month for neural and 5 million chars/month for standard.
+
+For now, the default will be Matthew with neural engine. Maybe will make that configurable from frontend.

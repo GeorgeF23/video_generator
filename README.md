@@ -20,6 +20,17 @@ sudo apt install git bash curl python3 python3-pip wget curl
 pip install --upgrade pip
 pip install --upgrade awscli
 pip install -r src/video_generator/requirements.txt
+sudo ln -s /usr/bin/python3 /usr/bin/python # to use python insead of python3
+
+# Install youtube-dl
+sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+sudo chmod a+rx /usr/local/bin/yt-dlp
+
+# Install ffmpeg
+sudo curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o /tmp/ffmpeg.tar.xz
+sudo tar xvf /tmp/ffmpeg.tar.xz -C /tmp
+sudo find /tmp -name "ffmpeg" -exec  cp {} /usr/local/bin ";"
+sudo rm /tmp/ffmpeg.tar.xz
 ```
 
 #### 1.2 Running locally

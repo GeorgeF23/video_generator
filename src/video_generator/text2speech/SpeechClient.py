@@ -40,7 +40,6 @@ class SpeechClient():
 
                 try:
                     with open(output, "wb") as file:
-                        pdb.set_trace()
                         file.write(stream.read())
                     logging.info('[SpeechClient] Timestamps extraction successful')
                     return output

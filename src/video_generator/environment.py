@@ -1,8 +1,9 @@
 import os
+from tempfile import gettempdir
 from typing import List
 
 
-tmp_dir = os.environ.get('TMP_DIR')
+tmp_dir = os.environ.get('TMP_DIR', gettempdir())
 ffmpeg_path = os.environ.get('FFMPEG_PATH', 'ffmpeg')
 
 def check_env_dirs(dirs: List[str]) -> None:

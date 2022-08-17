@@ -12,14 +12,15 @@ def generate(configuration: GenerationConfigurationDto):
     voice_path = configuration.voice_path
     timestamps_path = configuration.timestamps_path
 
-    output_path = os.path.join('..', tmp_dir, uuid4().hex + '.mp4')
+    output_path = os.path.join(tmp_dir, uuid4().hex + '.mp4')
 
     ffmpeg_cmd = f"""
         {ffmpeg_path} \
-        -i "{video_path}" \
-        -i "{voice_path}" \
+        -i "{video_path}" -t 00:00:10 \
+        -i "{voice_path}" -t 00:00:10 \
+        -vf "drawtext=text='Test text':x=20:y=20" \
         -map 0:v -map 1:a \
-        -c:v copy -c:a aac \
+        -c:a aac -c:v libx264 -preset ultrafast -crf 23 \
         "{output_path}" -shortest -y
     """
     

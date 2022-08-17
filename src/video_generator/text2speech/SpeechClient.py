@@ -2,7 +2,7 @@ import pdb
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError
 import os
-from tempfile import gettempdir
+from environment import tmp_dir
 from contextlib import closing
 from uuid import uuid4
 import logging
@@ -36,7 +36,7 @@ class SpeechClient():
         
         if "AudioStream" in response:
             with closing(response["AudioStream"]) as stream:
-                output = os.path.join(gettempdir(), uuid4().hex + ".json")
+                output = os.path.join(tmp_dir, uuid4().hex + ".json")
 
                 try:
                     with open(output, "wb") as file:
@@ -57,7 +57,7 @@ class SpeechClient():
         # Access the audio stream from the response
         if "AudioStream" in response:
             with closing(response["AudioStream"]) as stream:
-                output = os.path.join(gettempdir(), uuid4().hex + ".mp3")
+                output = os.path.join(tmp_dir, uuid4().hex + ".mp3")
 
                 try:
                     with open(output, "wb") as file:

@@ -6,12 +6,11 @@ from typing import List
 tmp_dir = os.environ.get('TMP_DIR', gettempdir())
 ffmpeg_path = os.environ.get('FFMPEG_PATH', 'ffmpeg')
 
-text_config = {
-    'fontsize': int(os.environ.get('TEXT_FONT_SIZE')),
-    'fontcolor': os.environ.get('TEXT_FONT_COLOR'),
-    'chars_per_line': float(os.environ.get('TEXT_CHARS_PER_LINE_COEF')) * int(os.environ.get('TEXT_FONT_SIZE')),
-    'lines_per_screen': int(os.environ.get('TEXT_LINES_PER_SCREEN'))
-}
+class TEXT_CONFIG:
+    FONT_SIZE = int(os.environ.get('TEXT_FONT_SIZE'))
+    FONT_COLOR = os.environ.get('TEXT_FONT_COLOR')
+    CHARS_PER_LINE = float(os.environ.get('TEXT_CHARS_PER_LINE_COEF')) * int(os.environ.get('TEXT_FONT_SIZE'))
+    LINES_PER_SCREEN = int(os.environ.get('TEXT_LINES_PER_SCREEN'))
 
 def check_env_dirs(dirs: List[str]) -> None:
     for dir in dirs:

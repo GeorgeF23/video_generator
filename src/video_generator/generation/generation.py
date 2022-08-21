@@ -3,9 +3,10 @@ import os
 from typing import List
 from uuid import uuid4
 from generation.GenerationConfiguration import GenerationConfigurationDto
-from environment import ffmpeg_path, tmp_dir
+from environment import ffmpeg_path, tmp_dir, TEXT_CONFIG
 from subprocess import check_call
 import logging
+import textwrap
 
 from .SentenceInfo import SentenceInfo
 
@@ -26,9 +27,15 @@ def get_sentences_info(timestamps_path: str) -> List[SentenceInfo]:
             ))
     return sentences
 
+def process_new_lines(sentences: List[SentenceInfo]) -> List[SentenceInfo]:
+    for sentence in sentences:
+        sentence.text = textwrap.fill(sentence.text, width=TEXT_CONFIG.CHARS_PER_LINE)
+        sentence.lines_number = sentence.text.count('\n')
+    return sentences
+
 def get_filter_complex_command(timestamps_path: str) -> str:
     sentences = get_sentences_info(timestamps_path)
-
+    sentences = process_new_lines(sentences)
     return get_text_overlay_filter(sentences[0], 100, 100)
 
 def generate(configuration: GenerationConfigurationDto):

@@ -7,3 +7,4 @@ class SentenceInfo:
     start_index: int
     end_index: int
     text: str
+    lines_number: int = 0

@@ -5,6 +5,8 @@ from environment import ffmpeg_path, tmp_dir
 from subprocess import check_call
 import logging
 
+from .ffmpeg_helper import get_text_overlay_filter
+
 def generate(configuration: GenerationConfigurationDto):
     logging.info('[Generation] Starting generation with configuration: ' + str(configuration))
 
@@ -14,12 +16,14 @@ def generate(configuration: GenerationConfigurationDto):
 
     output_path = os.path.join(tmp_dir, uuid4().hex + '.mp4')
 
+    text_command = get_text_overlay_filter('Test text', 100, 100, 1, 3)
+
     ffmpeg_cmd = f"""
         {ffmpeg_path} \
         -i "{video_path}" -t 00:00:10 \
         -i "{voice_path}" -t 00:00:10 \
-        -vf "drawtext=text='Test text':x=20:y=20" \
-        -map 0:v -map 1:a \
+        -filter_complex "[0:v]{text_command}[final]" \
+        -map "[final]" -map 1:a \
         -c:a aac -c:v libx264 -preset ultrafast -crf 23 \
         "{output_path}" -shortest -y
     """

@@ -1,11 +1,35 @@
+import json
 import os
+from typing import List
 from uuid import uuid4
 from generation.GenerationConfiguration import GenerationConfigurationDto
 from environment import ffmpeg_path, tmp_dir
 from subprocess import check_call
 import logging
 
+from .SentenceInfo import SentenceInfo
+
 from .ffmpeg_helper import get_text_overlay_filter
+
+def get_sentences_info(timestamps_path: str) -> List[SentenceInfo]:
+    sentences:List[SentenceInfo] = []
+    
+    with open(timestamps_path, 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            sentence = json.loads(line)
+            sentences.append(SentenceInfo(
+                sentence['time'],
+                sentence['start'],
+                sentence['end'],
+                sentence['value']
+            ))
+    return sentences
+
+def get_filter_complex_command(timestamps_path: str) -> str:
+    sentences = get_sentences_info(timestamps_path)
+
+    return get_text_overlay_filter(sentences[0], 100, 100)
 
 def generate(configuration: GenerationConfigurationDto):
     logging.info('[Generation] Starting generation with configuration: ' + str(configuration))
@@ -16,14 +40,12 @@ def generate(configuration: GenerationConfigurationDto):
 
     output_path = os.path.join(tmp_dir, uuid4().hex + '.mp4')
 
-    text_command = get_text_overlay_filter('Test text', 100, 100, 1, 3)
-
     ffmpeg_cmd = f"""
         {ffmpeg_path} \
         -i "{video_path}" -t 00:00:10 \
         -i "{voice_path}" -t 00:00:10 \
-        -filter_complex "[0:v]{text_command}[final]" \
-        -map "[final]" -map 1:a \
+        -filter_complex "{get_filter_complex_command(timestamps_path)}" \
+        -map 0:v -map 1:a \
         -c:a aac -c:v libx264 -preset ultrafast -crf 23 \
         "{output_path}" -shortest -y
     """

@@ -9,7 +9,7 @@ from reddit.RedditClient import RedditClient
 from text2speech.SpeechClient import SpeechClient
 from generation.generation import generate
 import logging
-from environment import initialize_environment
+from environment import initialize_environment, tmp_dir
 from common.resources.resources_manager import download_resource
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
@@ -29,7 +29,7 @@ logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 # print(SpeechClient.get_instance().get_text_timestamps("My boyfriend(M20)and me(F19) have been dating for 7 months,and I’ve noticed some weird interactions between him and his animals. As we started our relationship I’ve noticed he shows a lot of attention to his cats,like kisses and laying down with them as he would with me or calling them his girlfriends.We were talking on the phone one night and he was telling me about his female cats(he has two)we weren’t really talking that much until he said”you wanna know something I noticed about Jenny?”I replied yeah what is it?he said “Jenny doesn’t like when someone else touches her private parts,but when I do it she doesn’t mind”."))
 
 generate(GenerationConfigurationDto(
-    'tmp/b9d1719cf09345c8a0cd1f6a7ab57064.webm',
-    'tmp/27a3848d958f4f669f1f9cb9e6d1b3a7.mp3',
-    'tmp/ea1f9037077f42029da0e4fcf40b268a.json'
+    os.path.join(tmp_dir, 'b9d1719cf09345c8a0cd1f6a7ab57064.webm'),
+    os.path.join(tmp_dir, '27a3848d958f4f669f1f9cb9e6d1b3a7.mp3'),
+    os.path.join(tmp_dir, 'ea1f9037077f42029da0e4fcf40b268a.json')
 ))

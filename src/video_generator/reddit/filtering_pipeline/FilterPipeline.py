@@ -2,12 +2,11 @@
 import logging
 import pdb
 from reddit.PostData import PostDataDto
-from reddit.filtering_pipeline.filters.CharacterCount import CharacterCount
-from reddit.filtering_pipeline.filters.UnusedPost import UnusedPost
+from reddit.filtering_pipeline.filters import CharacterCount, MergeLines, UnusedPost
 
 
 class FilterPipeline:
-    FILTERS = [CharacterCount, UnusedPost]
+    FILTERS = [MergeLines, CharacterCount, UnusedPost]
 
     def __init__(self, posts: PostDataDto):
         self.posts = posts

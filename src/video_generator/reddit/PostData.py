@@ -7,7 +7,7 @@ from typing import List
 class PostDataDto:
     id: str
     title: str
-    content: List[str]
+    content: str
 
     def get_content_length(self) -> int:
         count = 0

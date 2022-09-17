@@ -8,21 +8,21 @@ from reddit.filtering_pipeline.FilterProcessor import FilterProcessor
 
 
 class FilterPipeline:
-	FILTERS: List[FilterProcessor] = [RemoveEdits, CharacterCount, UnusedPost]
+	FILTERS: List[FilterProcessor] = [RemoveEdits, CharacterCount, UnusedPost]  # type: ignore
 
-	def __init__(self, posts: PostDataDto):
+	def __init__(self, posts: List[PostDataDto]):
 		self.posts = posts
 
 	def start(self):
 		for filter in FilterPipeline.FILTERS:
 			initial_count = len(self.posts)
 
-			f = filter(self.posts)
+			f = filter(self.posts)  # type: ignore
 			self.posts = f.run()
 
 			final_count = len(self.posts)
 			logging.info(
-				f'{filter.__name__} removed {initial_count - final_count} posts.')
+				f'{filter.__name__} removed {initial_count - final_count} posts.')  # type: ignore
 
 	def merge_lines(self):
 		for post in self.posts:

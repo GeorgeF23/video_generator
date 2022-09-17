@@ -8,9 +8,9 @@ def remove_html(content: str) -> List[str]:
     paragraphs = bs.find_all('p')
     return list(map(lambda p: p.text, paragraphs))
 
-def beautify(content: str) -> str:
+def beautify(content: str) -> List[str]:
     operations = [unescape, unescape, remove_html]
 
     for op in operations:
         content = op(content)
-    return content
+    return content  # type: ignore 

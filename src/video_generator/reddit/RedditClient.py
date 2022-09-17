@@ -44,8 +44,8 @@ class RedditClient:
             try:
                 id = hashlib.md5(post['data']['permalink'].encode()).hexdigest()
                 title = post['data']['title']
-                content = beautify(post['data']['selftext_html'])
-                post_data = PostDataDto(id, title, content)
+                lines = beautify(post['data']['selftext_html'])
+                post_data = PostDataDto(id, title, lines, None)
 
                 posts.append(post_data)
             except:

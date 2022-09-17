@@ -9,5 +9,5 @@ class FilterProcessor(ABC):
         self.posts = posts
     
     @abstractmethod
-    def run(self):
+    def run(self) -> List[PostDataDto]:
         return NotImplemented

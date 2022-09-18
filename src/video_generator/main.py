@@ -47,7 +47,7 @@ def get_sentences(text: str) -> List[SentenceInfo]:
 
 def handler(request: MainRequestDto):
 	post = get_post(request.subreddit)
-	video_url = download_resource(request.video_url, youtube=True)
+	video_url = download_resource(request.video_url)
 	if video_url is None:
 		raise RuntimeError(f'Video not found')
 

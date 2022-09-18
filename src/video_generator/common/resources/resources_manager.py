@@ -23,8 +23,8 @@ def download_youtube_resource(url: str) -> str | None:
 
 	return local_path + '.webm'
 
-def download_resource(url: str, youtube = False) -> str | None:
-	if youtube == True:
+def download_resource(url: str) -> str | None:
+	if url.startswith('https://www.youtube'):
 		local_resource = download_youtube_resource(url)
 	else:
 		local_resource = None

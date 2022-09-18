@@ -1,7 +1,10 @@
+from dataclasses import dataclass
+import dataclasses
 import json
 import os
 import textwrap
 from typing import List
+from urllib import request
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -12,7 +15,7 @@ from common.resources import get_audio_duration
 from MainRequestDto import MainRequestDto
 from reddit.PostData import PostDataDto
 from environment import initialize_environment, tmp_dir, TEXT_CONFIG, AUDIO_CUT_TIME
-from MainResponeDto import MainResponseDto, ResponseStatus
+from MainResponeDto import MainResponseDto
 initialize_environment()
 
 from reddit.RedditClient import RedditClient
@@ -29,7 +32,7 @@ def get_post(subreddit: str) -> PostDataDto:
 	r = RedditClient()
 	posts = []
 	while len(posts) == 0:
-		posts = r.get_posts('confessions', try_count)
+		posts = r.get_posts(subreddit, try_count)
 		try_count += 1
 
 	# es_client = ElasticSearchClient.get_instance()
@@ -63,17 +66,40 @@ def main(request: MainRequestDto):
 		))
 
 		logging.info(f'Got final video: {output_path}')
-		response = MainResponseDto(ResponseStatus.SUCCESS, output_path, "")
+		response = MainResponseDto("success", output_path, "")
 		return response
 	except RuntimeError as err:
 		logging.error(f'[handler] Got error: {err}')
-		response = MainResponseDto(ResponseStatus.ERROR, "", str(err))
+		response = MainResponseDto("error", "", str(err))
 	
 	return response
 
-def handler(event, context):
-	logging.info(f'Invoked by API')
+def handler(event, _):
 	logging.info(event)
+	request = None
+	response = None
+	if 'body' in event:
+		logging.info(f'Invoked by API')
+		request_str = event['body']
+		request_dict = json.loads(request_str)
+		request = MainRequestDto(**request_dict)
+
+	if request:
+		response = main(request)
+	else:
+		response = MainResponseDto("error", "", "Could not get request")
+	response = dataclasses.asdict(response)
+	logging.info(f'Response is: {response}')
+	return {
+		"statusCode": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"body": json.dumps(response)
+	}
 
 if __name__ == '__main__':
-	main(MainRequestDto('https://www.youtube.com/watch?v=qu8X8UxBjjM', 'confessions'))
+	r = main(MainRequestDto('https://www.youtube.com/watch?v=qu8X8UxBjjM', 'confessions'))
+	print(dataclasses.asdict(r))	
+	print(json.dumps(dataclasses.asdict(r)))
+

@@ -1,3 +1,4 @@
+import logging
 import os
 from tempfile import gettempdir
 from typing import List
@@ -28,4 +29,7 @@ def check_env_dirs(dirs: List[str]) -> None:
 
 def initialize_environment() -> None:
 	check_env_dirs([tmp_dir])
-	# TODO: add dotenv here
+	if len(logging.getLogger().handlers) > 0:
+		logging.getLogger().setLevel(logging.INFO)
+	else:
+		logging.basicConfig(level=logging.INFO)

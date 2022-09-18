@@ -1,7 +1,9 @@
+import json
 import os
 import textwrap
 from typing import List
 from dotenv import load_dotenv
+load_dotenv()
 
 from common.elasticsearch.ElasticSearchClient import ElasticSearchClient
 from generation.GenerationConfiguration import GenerationConfigurationDto
@@ -10,7 +12,7 @@ from common.resources import get_audio_duration
 from MainRequestDto import MainRequestDto
 from reddit.PostData import PostDataDto
 from environment import initialize_environment, tmp_dir, TEXT_CONFIG, AUDIO_CUT_TIME
-load_dotenv()
+from MainResponeDto import MainResponseDto, ResponseStatus
 initialize_environment()
 
 from reddit.RedditClient import RedditClient
@@ -45,21 +47,33 @@ def get_sentences(text: str) -> List[SentenceInfo]:
 	return sentences
 
 
-def handler(request: MainRequestDto):
-	post = get_post(request.subreddit)
-	video_url = download_resource(request.video_url)
-	if video_url is None:
-		raise RuntimeError(f'Video not found')
+def main(request: MainRequestDto):
+	response = None
+	try:
+		post = get_post(request.subreddit)
+		video_url = download_resource(request.video_url)
+		if video_url is None:
+			raise RuntimeError(f'Video not found')
 
-	sentences = get_sentences(post.content)
+		sentences = get_sentences(post.content)
 
-	output_path = generate(GenerationConfigurationDto(
-		video_url,
-		sentences
-	))
+		output_path = generate(GenerationConfigurationDto(
+			video_url,
+			sentences
+		))
 
-	logging.info(f'Got final video: {output_path}')
+		logging.info(f'Got final video: {output_path}')
+		response = MainResponseDto(ResponseStatus.SUCCESS, output_path, "")
+		return response
+	except RuntimeError as err:
+		logging.error(f'[handler] Got error: {err}')
+		response = MainResponseDto(ResponseStatus.ERROR, "", str(err))
+	
+	return response
 
+def handler(event, context):
+	logging.info(f'Invoked by API')
+	logging.info(event)
 
 if __name__ == '__main__':
-	pass
+	main(MainRequestDto('https://www.youtube.com/watch?v=qu8X8UxBjjM', 'confessions'))

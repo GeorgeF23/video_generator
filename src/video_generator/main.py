@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 
 from common.elasticsearch.ElasticSearchClient import ElasticSearchClient
 from generation.GenerationConfiguration import GenerationConfigurationDto
-from video_generator.common.SentenceInfo import SentenceInfo
-from video_generator.common.resources import get_audio_duration
+from common.SentenceInfo import SentenceInfo
+from common.resources import get_audio_duration
 load_dotenv()
 
 from reddit.RedditClient import RedditClient
@@ -35,14 +35,13 @@ for t in split_text:
 	audio_path = SpeechClient.get_instance().get_text_to_speech(t)
 	audio_length = get_audio_duration(audio_path)
 	s = SentenceInfo(audio_length, audio_path, t)
-	print()
+	sentences.append(s)
 
 # mp3, timestamps = SpeechClient.get_instance().process_text(test)
 # print(mp3)
 # print(timestamps)
 
-# generate(GenerationConfigurationDto(
-#     os.path.join(tmp_dir, 'b9d1719cf09345c8a0cd1f6a7ab57064.webm'),
-#     os.path.join(tmp_dir, 'bce8b1a6158b4e0093cf77b82ad976b3.mp3'),
-#     os.path.join(tmp_dir, '02209ec6029540218a974e24680800f2.json')
-# ))
+generate(GenerationConfigurationDto(
+    os.path.join(tmp_dir, '48806b9381e7449ca465bfdd1268336b.webm'),
+    sentences
+))

@@ -41,3 +41,5 @@ def generate(configuration: GenerationConfigurationDto):
 	logging.info('[Generation] Starting ffmpeg process with command: ' + ffmpeg_cmd)
 	check_call(ffmpeg_cmd, shell=True)
 	logging.info(f'[Generation] Ffmpeg process finished. Output file is: {output_path}')
+
+	return output_path

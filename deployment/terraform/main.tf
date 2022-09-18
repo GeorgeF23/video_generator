@@ -26,8 +26,7 @@ resource "aws_s3_bucket_acl" "main_bucket_acl" {
 
 resource "aws_ecr_repository" "ecr_repo" {
   count = var.use_ecr ? 1 : 0
-  name = "lambda_repo"
-  force_delete = true
+  name = var.ecr_name
 }
 
 output "s3_bucket_name" {
@@ -36,4 +35,8 @@ output "s3_bucket_name" {
 
 output "ecr_url" {
 	value = var.use_ecr ? aws_ecr_repository.ecr_repo[0].repository_url : "NA"
+}
+
+output "ecr_name" {
+	value = var.use_ecr ? var.ecr_name : "NA"
 }

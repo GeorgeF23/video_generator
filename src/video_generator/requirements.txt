@@ -1,6 +1,5 @@
 awscli
 python-dotenv
-urllib==1.26.9
 bs4
 elasticsearch==7.8.0
 boto3==1.24.31

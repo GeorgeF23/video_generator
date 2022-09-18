@@ -5,5 +5,6 @@ use_lambda = true
 lambda_name = "main_lambda"
 
 environment_variables = {
-  "LOG_LEVEL" = "DEBUG"
+  "LOG_LEVEL" = "DEBUG",
+  "TMP_DIR" = "/tmp"
 }

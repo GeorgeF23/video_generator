@@ -30,6 +30,6 @@ def check_env_dirs(dirs: List[str]) -> None:
 def initialize_environment() -> None:
 	check_env_dirs([tmp_dir])
 	if len(logging.getLogger().handlers) > 0:
-		logging.getLogger().setLevel(logging.INFO)
+		logging.getLogger().setLevel(logging.DEBUG)
 	else:
-		logging.basicConfig(level=logging.INFO)
+		logging.basicConfig(level=logging.DEBUG)

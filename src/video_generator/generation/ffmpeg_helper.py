@@ -8,8 +8,8 @@ from common.SentenceInfo import SentenceInfo
 def get_text_overlay_filter(text: str, start_time: float, end_time: float) -> str:
 	font_size = TEXT_CONFIG.FONT_SIZE
 	font_color = TEXT_CONFIG.FONT_COLOR
-	x = TEXT_CONFIG.X
-	y = TEXT_CONFIG.Y
+	x = TEXT_CONFIG.X_COEF
+	y = TEXT_CONFIG.Y_COEF
 
 	text = textwrap.fill(text, width=TEXT_CONFIG.CHARS_PER_LINE)
 
@@ -19,7 +19,7 @@ def get_text_overlay_filter(text: str, start_time: float, end_time: float) -> st
 
 	timing_config = f"enable='between(t,{start_time},{end_time})'"
 	styling_config = f"fontsize={font_size}:fontcolor={font_color}"
-	return f"drawtext=textfile='{text_path}':{styling_config}:x={x}:y={y}:{timing_config}"
+	return f"drawtext=textfile='{text_path}':{styling_config}:x={x}*w:y={y}*h:{timing_config}"
 
 def get_text_filter(sentences: List[SentenceInfo], source: str, dest: str) -> str:
 	filters = []

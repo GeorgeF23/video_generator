@@ -31,7 +31,7 @@ def generate(configuration: GenerationConfigurationDto):
 		{ffmpeg_path} \
 		{get_input_command(video_path, video_end_time)} \
 		{get_audio_input(sentences)} \
-		-filter_complex "{get_audio_concat(1, no_sentences, final_audio_name)};{get_text_filter(sentences, '[0:v]', final_video_name)}" \
+		-filter_complex "{get_audio_concat(1, no_sentences, final_audio_name)};[0:v]crop=ih*(9/16):ih{final_video_name};{get_text_filter(sentences, final_video_name, final_video_name)}" \
 		-map {final_video_name} -map {final_audio_name} \
 		-c:a aac -c:v libx264 -preset ultrafast -crf 23 \
 		"{output_path}" -shortest -y

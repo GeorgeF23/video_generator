@@ -2,7 +2,7 @@ import os
 import textwrap
 from typing import List
 from uuid import uuid4
-from environment import TEXT_CONFIG, tmp_dir
+from environment import AUDIO_CUT_TIME, TEXT_CONFIG, tmp_dir
 from common.SentenceInfo import SentenceInfo
 
 def get_text_overlay_filter(text: str, start_time: float, end_time: float) -> str:
@@ -32,7 +32,7 @@ def get_text_filter(sentences: List[SentenceInfo], source: str, dest: str) -> st
 	start_time = 0
 	for s in sentences:
 		end_time = start_time + s.length
-		filters.append(get_text_overlay_filter(s.text, start_time, end_time))
+		filters.append(get_text_overlay_filter(s.text, start_time, end_time - 0.1))
 		start_time = end_time
 
 	filters_str = f'{dest};{dest}'.join(filters)
@@ -45,13 +45,13 @@ def convert_seconds_to_time(seconds: float) -> str:
 
 	return f'{hours:02d}:{minutes:02d}:{seconds:02d}'
 
-def get_input_command(path: str, end_time: str) -> str:
-	return f'-t {end_time} -i "{path}"'
+def get_input_command(path: str, end_time: float, start_time: float = 0) -> str:
+	return f'-ss {start_time} -t {end_time} -i "{path}"'
 
 def get_audio_input(sentences: List[SentenceInfo]) -> str:
 	inputs = []
 	for s in sentences:
-		inputs.append(f'-i "{s.audio_path}"')
+		inputs.append(get_input_command(s.audio_path, s.length, AUDIO_CUT_TIME))
 
 	return " ".join(inputs)
 

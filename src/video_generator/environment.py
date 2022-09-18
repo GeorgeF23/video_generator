@@ -7,6 +7,7 @@ tmp_dir = os.environ.get('TMP_DIR', gettempdir())
 ffmpeg_path = os.environ.get('FFMPEG_PATH', 'ffmpeg')
 
 END_TIME_OFFSET = int(os.environ.get('END_TIME_OFFSET', ''))
+AUDIO_CUT_TIME = float(os.environ.get('AUDIO_CUT_TIME', ''))
 
 class TEXT_CONFIG:
 	FONT_PATH = os.environ.get('TEXT_FONT_PATH', '')

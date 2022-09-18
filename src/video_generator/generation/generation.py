@@ -22,7 +22,7 @@ def generate(configuration: GenerationConfigurationDto):
 	sentences = configuration.sentences
 	no_sentences = len(sentences)
 
-	video_end_time = convert_seconds_to_time(get_end_time(sentences) + END_TIME_OFFSET)
+	video_end_time = get_end_time(sentences) + END_TIME_OFFSET
 	output_path = os.path.join(tmp_dir, uuid4().hex + '.mp4')
 
 	final_audio_name = "[audio_final]"

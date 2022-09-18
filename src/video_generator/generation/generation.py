@@ -9,10 +9,11 @@ import logging
 
 from common.SentenceInfo import SentenceInfo
 from .ffmpeg_helper import convert_seconds_to_time, get_audio_input, get_text_overlay_filter, get_input_command, \
-							get_audio_concat
+							get_audio_concat, get_text_filter
 
 def get_end_time(sentences: List[SentenceInfo]) -> float:
 	return reduce(lambda acc, s: acc + s.length, sentences, 0)
+
 
 def generate(configuration: GenerationConfigurationDto):
 	logging.info('[Generation] Starting generation with configuration: ' + str(configuration))
@@ -25,12 +26,13 @@ def generate(configuration: GenerationConfigurationDto):
 	output_path = os.path.join(tmp_dir, uuid4().hex + '.mp4')
 
 	final_audio_name = "[audio_final]"
+	final_video_name = "[video_final]"
 	ffmpeg_cmd = f"""
 		{ffmpeg_path} \
 		{get_input_command(video_path, video_end_time)} \
 		{get_audio_input(sentences)} \
-		-filter_complex "{get_audio_concat(1, no_sentences, final_audio_name)}" \
-		-map 0:v -map {final_audio_name} \
+		-filter_complex "{get_audio_concat(1, no_sentences, final_audio_name)};{get_text_filter(sentences, '[0:v]', final_video_name)}" \
+		-map {final_video_name} -map {final_audio_name} \
 		-c:a aac -c:v libx264 -preset ultrafast -crf 23 \
 		"{output_path}" -shortest -y
 	"""

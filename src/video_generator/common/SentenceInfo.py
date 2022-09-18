@@ -3,5 +3,6 @@ from dataclasses import dataclass
 
 @dataclass
 class SentenceInfo:
-    start_time: int
-    text: str
+	length: float
+	audio_path: str
+	text: str

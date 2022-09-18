@@ -23,3 +23,17 @@ resource "aws_s3_bucket_acl" "main_bucket_acl" {
   bucket = aws_s3_bucket.main_bucket[0].id
   acl = "private"
 }
+
+resource "aws_ecr_repository" "ecr_repo" {
+  count = var.use_ecr ? 1 : 0
+  name = "lambda_repo"
+  force_delete = true
+}
+
+output "s3_bucket_name" {
+  value = var.use_s3 ? aws_s3_bucket.main_bucket[0].bucket_domain_name : "NA"
+}
+
+output "ecr_url" {
+	value = var.use_ecr ? aws_ecr_repository.ecr_repo[0].repository_url : "NA"
+}

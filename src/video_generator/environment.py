@@ -16,6 +16,9 @@ class TEXT_CONFIG:
 	CHARS_PER_SCREEN = int(float(os.environ.get('TEXT_CHARS_PER_SCREEN_COEF', '')) * int(os.environ.get('TEXT_FONT_SIZE', '')))
 	X_COEF = float(os.environ.get('TEXT_START_X', ''))
 	Y_COEF = float(os.environ.get('TEXT_START_Y', ''))
+	BOX=int(os.environ.get('BOX', ''))
+	BOX_W=int(os.environ.get('BOX_W', ''))
+	BOX_COLOR=os.environ.get('BOX_COLOR', '')
 
 def check_env_dirs(dirs: List[str]) -> None:
 	for dir in dirs:

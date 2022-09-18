@@ -12,6 +12,10 @@ def get_text_overlay_filter(text: str, start_time: float, end_time: float) -> st
 	x = TEXT_CONFIG.X_COEF
 	y = TEXT_CONFIG.Y_COEF
 
+	use_box = TEXT_CONFIG.BOX
+	box_w = TEXT_CONFIG.BOX_W
+	box_color = TEXT_CONFIG.BOX_COLOR
+
 	text = textwrap.fill(text, width=TEXT_CONFIG.CHARS_PER_LINE)
 
 	text_path = os.path.join(tmp_dir, uuid4().hex)
@@ -20,7 +24,8 @@ def get_text_overlay_filter(text: str, start_time: float, end_time: float) -> st
 
 	timing_config = f"enable='between(t,{start_time},{end_time})'"
 	styling_config = f"fontsize={font_size}:fontcolor={font_color}:fontfile={font_file}"
-	return f"drawtext=textfile='{text_path}':{styling_config}:x={x}*w:y={y}*h:{timing_config}"
+	box_config = f"box={use_box}:boxborderw={box_w}:boxcolor={box_color}"
+	return f"drawtext=textfile='{text_path}':{styling_config}:x={x}*w:y={y}*h:{timing_config}:{box_config}"
 
 def get_text_filter(sentences: List[SentenceInfo], source: str, dest: str) -> str:
 	filters = []

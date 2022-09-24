@@ -71,7 +71,7 @@ def main(request: MainRequestDto):
 		s3_url = S3Client.get_instance().upload_file(output_path)
 		response = MainResponseDto("success", s3_url, "")
 		return response
-	except RuntimeError as err:
+	except Exception as err:
 		logging.error(f'[handler] Got error: {err}')
 		response = MainResponseDto("error", "", str(err))
 	

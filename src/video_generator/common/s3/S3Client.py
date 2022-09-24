@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Optional
 import boto3
 from urllib.parse import urlparse
 
@@ -25,13 +26,13 @@ class S3Client():
 			logging.error(f'There was an error while connecting to the S3 service: {err}')
 			raise err
 
-	def upload_file(self, local_path: str, s3_bucket: str | None = None, s3_key: str | None = None) -> str:
+	def upload_file(self, local_path: str, s3_bucket: Optional[str] = None, s3_key: Optional[str] = None) -> str:
 		"""Uploads a file to s3
 
 		Args:
 			local_path (str): path to the file to upload
-			s3_bucket (str | None, optional): Bucket to upload to. Defaults to S3_BUCKET env var.
-			s3_key (str | None, optional): The path to upload to. Defaults to 'tmp/{filename}'.
+			s3_bucket (str, optional): Bucket to upload to. Defaults to S3_BUCKET env var.
+			s3_key (str, optional): The path to upload to. Defaults to 'tmp/{filename}'.
 
 		Raises:
 			err: Raises an error if the upload fails
@@ -56,12 +57,12 @@ class S3Client():
 			logging.error(f'There was an error while uploading file {local_path} to {s3_key}: {err}')
 			raise err
 
-	def download_file(self, s3_url: str, local_path: str | None = None) -> str:
+	def download_file(self, s3_url: str, local_path: Optional[str] = None) -> str:
 		"""Downloads a file from s3.
 
 		Args:
 			s3_url (str): Url of the file to download. Can be the full url or only the key
-			local_path (str | None, optional): Location where to store the file. If not provided then it will be placed in TMP_DIR.
+			local_path (str, optional): Location where to store the file. If not provided then it will be placed in TMP_DIR.
 
 		Raises:
 			err: Raised error if downloading fails

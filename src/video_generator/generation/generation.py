@@ -3,7 +3,7 @@ import os
 from typing import List
 from uuid import uuid4
 from generation.GenerationConfiguration import GenerationConfigurationDto
-from environment import END_TIME_OFFSET, ffmpeg_path, tmp_dir, TEXT_CONFIG
+from environment import END_TIME_OFFSET, tmp_dir
 from subprocess import check_call
 import logging
 
@@ -28,7 +28,7 @@ def generate(configuration: GenerationConfigurationDto):
 	final_audio_name = "[audio_final]"
 	final_video_name = "[video_final]"
 	ffmpeg_cmd = f"""
-		{ffmpeg_path} \
+		ffmpeg \
 		{get_input_command(video_path, video_end_time)} \
 		{get_audio_input(sentences)} \
 		-filter_complex "{get_audio_concat(1, no_sentences, final_audio_name)};[0:v]crop=ih*(9/16):ih{final_video_name};{get_text_filter(sentences, final_video_name, final_video_name)}" \

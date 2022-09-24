@@ -1,10 +1,7 @@
-import pdb
-import textwrap
-from typing import Tuple
 from boto3 import Session
 from botocore.exceptions import BotoCoreError, ClientError
 import os
-from environment import tmp_dir, TEXT_CONFIG
+from environment import tmp_dir
 from contextlib import closing
 from uuid import uuid4
 import logging

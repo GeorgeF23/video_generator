@@ -11,9 +11,8 @@ def download_youtube_resource(url: str) -> str:
 	local_path = os.path.join(tmp_dir, local_filename)
 
 
-	yt_dl = os.environ.get('YOUTUBE_DL_PATH')
 	timeout = int(os.environ.get('DOWNLOAD_TIMEOUT', '60'))
-	command = f'{yt_dl} -o {local_path} {url}'
+	command = f'yt_dl -o {local_path} {url}'
 
 	logging.debug(f'[youtube downloading] Command is: {command} with timeout {timeout}')
 

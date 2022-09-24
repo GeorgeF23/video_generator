@@ -23,6 +23,7 @@ from text2speech.SpeechClient import SpeechClient
 from generation.generation import generate
 import logging
 from common.resources.resources_manager import download_resource
+from common.s3 import S3Client
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
 
@@ -66,7 +67,9 @@ def main(request: MainRequestDto):
 		))
 
 		logging.info(f'Got final video: {output_path}')
-		response = MainResponseDto("success", output_path, "")
+
+		s3_url = S3Client.get_instance().upload_file(output_path)
+		response = MainResponseDto("success", s3_url, "")
 		return response
 	except RuntimeError as err:
 		logging.error(f'[handler] Got error: {err}')

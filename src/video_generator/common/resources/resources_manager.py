@@ -3,6 +3,7 @@ import os
 from environment import tmp_dir
 from subprocess import run
 from uuid import uuid4
+from common.s3 import S3Client
 
 def download_youtube_resource(url: str) -> str:
 	logging.info(f'[youtube downloading] Starting downloading of {url}')
@@ -27,6 +28,8 @@ def download_resource(url: str) -> str:
 	local_resource = url
 	if url.startswith('https://www.youtube'):
 		local_resource = download_youtube_resource(url)
+	elif url.startswith('s3://'):
+		local_resource = S3Client.get_instance().download_file(url)
 
 	if not os.path.exists(local_resource):
 		logging.error('[Resource download] Local resource could not be found after download')

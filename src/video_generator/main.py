@@ -99,7 +99,7 @@ def handler(event, _):
 	}
 
 if __name__ == '__main__':
-	r = main(MainRequestDto('https://www.youtube.com/watch?v=qu8X8UxBjjM', 'confessions'))
+	r = main(MainRequestDto('s3://main-video-generator/background_videos/49c5edd626204e5e8f912f34e36546e6.webm', 'confessions'))
 	print(dataclasses.asdict(r))	
 	print(json.dumps(dataclasses.asdict(r)))
 

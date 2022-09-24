@@ -15,7 +15,7 @@ provider "aws" {
 
 resource "aws_s3_bucket" "main_bucket" {
   count = var.use_s3 ? 1 : 0
-  bucket = "main-video-generator"
+  bucket = var.bucket_name
 }
 
 resource "aws_s3_bucket_acl" "main_bucket_acl" {
@@ -79,6 +79,32 @@ resource "aws_iam_policy" "lambda_logging" {
 EOF
 }
 
+resource "aws_iam_policy" "lambda_s3" {
+	count = var.use_s3 && var.use_lambda ? 1 : 0
+	name = "${var.lambda_name}-s3-policy"
+	description = "S3 policy for lambda"
+	policy = <<EOF
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"s3:*"
+			],
+			"Resource": "arn:aws:s3:::*"
+		}
+	]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3" {
+	count = var.use_s3 && var.use_lambda ? 1 : 0
+	role = aws_iam_role.iam_for_lambda[0].name
+	policy_arn = aws_iam_policy.lambda_s3[0].arn
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   count = var.use_lambda ? 1 : 0
   role       = aws_iam_role.iam_for_lambda[0].name
@@ -106,16 +132,19 @@ resource "aws_lambda_function" "main_lambda" {
 
   depends_on = [
     aws_iam_role_policy_attachment.lambda_logs[0],
-    aws_cloudwatch_log_group.cw_log_group[0]
+    aws_cloudwatch_log_group.cw_log_group[0],
+	aws_iam_role_policy_attachment.lambda_s3[0]
   ]
 
   environment {
-    variables = merge(var.environment_variables)
+    variables = merge(var.environment_variables, {
+		"S3_BUCKET" = var.bucket_name
+	})
   }
 }
 
 output "s3_bucket_name" {
-  value = var.use_s3 ? aws_s3_bucket.main_bucket[0].bucket_domain_name : "NA"
+  value = var.use_s3 ? var.bucket_name : "NA"
 }
 
 output "ecr_url" {

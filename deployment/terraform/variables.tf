@@ -18,6 +18,10 @@ variable "lambda_name" {
   description = "lambda name"
 }
 
+variable "bucket_name" {
+	description = "S3 bucket name"
+}
+
 variable "environment_variables" {
   type = map(string)
   description = "environment variables to pass to lambda"

@@ -4,7 +4,7 @@ from tempfile import gettempdir
 from typing import List
 
 
-tmp_dir = os.environ.get('TMP_DIR', gettempdir())
+tmp_dir = os.environ.get('TMP_DIR', '')
 ffmpeg_path = os.environ.get('FFMPEG_PATH', 'ffmpeg')
 
 END_TIME_OFFSET = int(os.environ.get('END_TIME_OFFSET', ''))

@@ -8,7 +8,7 @@ from subprocess import check_call
 import logging
 
 from common.SentenceInfo import SentenceInfo
-from .ffmpeg_helper import convert_seconds_to_time, get_audio_input, get_text_overlay_filter, get_input_command, \
+from .ffmpeg_helper import get_audio_input, get_input_command, \
 							get_audio_concat, get_text_filter
 
 def get_end_time(sentences: List[SentenceInfo]) -> float:

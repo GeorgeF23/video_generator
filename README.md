@@ -1,5 +1,5 @@
 # Video generator
-The application's goal is to create short (maybe long in the future) videos with a game in the background and a reddit text (maybe more sources in the future) over it.
+The application's goal is to create short videos with a video in the background and a reddit text over it.
 
 ### Table of contents
 - [Video generator](#video-generator)
@@ -95,6 +95,10 @@ The response is the local path to the ouput video.
 5. Some dummy words are placed at the start and end so the pronunciation is better
 6. The generation configuration is passed to the generator
 7. The output video is uploaded to S3
+
+Here is an example of a generated video:
+https://user-images.githubusercontent.com/39678100/192091817-45567c8c-95f5-47c0-85b9-5f1af7ba3e6e.mp4
+
 
 ### 4. Environment
 Some environment variables need to be set:

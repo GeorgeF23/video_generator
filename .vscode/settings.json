@@ -1,6 +1,4 @@
 {
-"editor.tabSize": 4,
-"editor.insertSpaces": false,
-"editor.detectIndentation": false,
+"editor.detectIndentation": true,
 "python.analysis.typeCheckingMode": "basic"
 }

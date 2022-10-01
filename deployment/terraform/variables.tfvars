@@ -1,5 +1,6 @@
 use_s3 = true
 use_ecr = true
+use_sns = true
 ecr_name = "lambda_repo"
 use_lambda = true
 lambda_name = "main_lambda"

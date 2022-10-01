@@ -27,5 +27,8 @@ variable "environment_variables" {
   description = "environment variables to pass to lambda"
   default = {
   }
+}
 
+variable "use_sns" {
+  description = "Whether or not to use SNS as lambda trigger"
 }

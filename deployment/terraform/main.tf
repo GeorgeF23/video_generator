@@ -169,14 +169,25 @@ resource "aws_lambda_function" "main_lambda" {
   }
 }
 
-output "s3_bucket_name" {
-  value = var.use_s3 ? var.bucket_name : "NA"
+resource "aws_sns_topic" "lambda_request_topic" {
+  count = var.use_sns ? 1 : 0
+  name = "generation-request"
 }
 
-output "ecr_url" {
-	value = var.use_ecr ? aws_ecr_repository.ecr_repo[0].repository_url : "NA"
+resource "aws_lambda_permission" "sns_permission" {
+  count = var.use_sns ? 1 : 0
+
+  statement_id  = "AllowExecutionFromSNS"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.main_lambda[0].function_name
+  principal     = "sns.amazonaws.com"
+  source_arn    = aws_sns_topic.lambda_request_topic[0].arn
 }
 
-output "ecr_name" {
-	value = var.use_ecr ? var.ecr_name : "NA"
+resource "aws_sns_topic_subscription" "lambda_subscription" {
+  count = var.use_sns ? 1 : 0
+
+  topic_arn = aws_sns_topic.lambda_request_topic[0].arn
+  protocol  = "lambda"
+  endpoint  = aws_lambda_function.main_lambda[0].arn
 }

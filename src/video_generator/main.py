@@ -7,11 +7,11 @@ import textwrap
 from typing import List
 from dotenv import load_dotenv
 
-from video_generator.common.sqs import SqsClient
 load_dotenv()
 
-from common.elasticsearch.ElasticSearchClient import ElasticSearchClient
 from generation.GenerationConfiguration import GenerationConfigurationDto
+from common.elasticsearch.ElasticSearchClient import ElasticSearchClient
+from common.sqs import SqsClient
 from common.SentenceInfo import SentenceInfo
 from common.resources import get_audio_duration
 from MainRequestDto import MainRequestDto
@@ -84,11 +84,11 @@ def main(request: MainRequestDto):
 
 def get_http_request(event):
 	request_str = event['body']
-	return json.loads(request_str)
+	return MainRequestDto(**json.loads(request_str))
 
 def get_sns_request(event):
 	message = event['Records'][0]['Sns']['Message']
-	return json.loads(message)
+	return MainRequestDto(**json.loads(message))
 
 def get_request(event):
 	if 'body' in event:
@@ -119,6 +119,7 @@ def handler(event, _):
 	request, invoke_type = get_request(event)
 	
 	if request:
+		logging.info(f'Got request: {request}')
 		response = main(request)
 	else:
 		response = MainResponseDto("error", "", "Could not get request")

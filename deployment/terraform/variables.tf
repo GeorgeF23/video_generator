@@ -29,6 +29,6 @@ variable "environment_variables" {
   }
 }
 
-variable "use_sns" {
+variable "use_sns_sqs" {
   description = "Whether or not to use SNS as lambda trigger"
 }

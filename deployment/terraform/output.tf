@@ -11,5 +11,9 @@ output "ecr_name" {
 }
 
 output "sns_topic_arn" {
-  value = var.use_sns ? aws_sns_topic.lambda_request_topic[0].arn : "NA"
+  value = var.use_sns_sqs ? aws_sns_topic.lambda_request_topic[0].arn : "NA"
+}
+
+output "sqs_response_url" {
+  value = var.use_sns_sqs ? aws_sqs_queue.lambda_response_queue[0].id : "NA"
 }

@@ -164,18 +164,19 @@ resource "aws_lambda_function" "main_lambda" {
 
   environment {
     variables = merge(var.environment_variables, {
-		"S3_BUCKET" = var.bucket_name
+		"S3_BUCKET" = var.bucket_name,
+    "GENERATION_RESPONSE_QUEUE" = aws_sqs_queue.lambda_response_queue[0].id
 	})
   }
 }
 
 resource "aws_sns_topic" "lambda_request_topic" {
-  count = var.use_sns ? 1 : 0
+  count = var.use_sns_sqs ? 1 : 0
   name = "generation-request"
 }
 
 resource "aws_lambda_permission" "sns_permission" {
-  count = var.use_sns ? 1 : 0
+  count = var.use_sns_sqs ? 1 : 0
 
   statement_id  = "AllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
@@ -185,9 +186,39 @@ resource "aws_lambda_permission" "sns_permission" {
 }
 
 resource "aws_sns_topic_subscription" "lambda_subscription" {
-  count = var.use_sns ? 1 : 0
+  count = var.use_sns_sqs ? 1 : 0
 
   topic_arn = aws_sns_topic.lambda_request_topic[0].arn
   protocol  = "lambda"
   endpoint  = aws_lambda_function.main_lambda[0].arn
+}
+
+resource "aws_sqs_queue" "lambda_response_queue" {
+  count = var.use_sns_sqs ? 1 : 0
+  name = "generation-response"
+}
+
+resource "aws_sqs_queue_policy" "lambda_sqs_policy" {
+  count = var.use_sns_sqs ? 1 : 0
+  queue_url = aws_sqs_queue.lambda_response_queue[0].id
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Id": "sqspolicy",
+  "Statement": [
+    {
+      "Sid": "First",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "sqs:SendMessage",
+      "Resource": "${aws_sqs_queue.lambda_response_queue[0].arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${aws_lambda_function.main_lambda[0].arn}"
+        }
+      }
+    }
+  ]
+}
+EOF
 }

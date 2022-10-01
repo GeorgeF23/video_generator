@@ -6,6 +6,8 @@ import os
 import textwrap
 from typing import List
 from dotenv import load_dotenv
+
+from video_generator.common.sqs import SqsClient
 load_dotenv()
 
 from common.elasticsearch.ElasticSearchClient import ElasticSearchClient
@@ -14,7 +16,7 @@ from common.SentenceInfo import SentenceInfo
 from common.resources import get_audio_duration
 from MainRequestDto import MainRequestDto
 from reddit.PostData import PostDataDto
-from environment import initialize_environment, tmp_dir, TEXT_CONFIG, AUDIO_CUT_TIME
+from environment import initialize_environment, tmp_dir, TEXT_CONFIG, AUDIO_CUT_TIME, RESPONSE_QUEUE_URL
 from MainResponeDto import MainResponseDto
 initialize_environment()
 
@@ -98,8 +100,18 @@ def get_request(event):
 	else:
 		return None, InvokeType.UNKNOWN
 
-def send_response(response: MainResponseDto, type: InvokeType):
-	pass
+def send_response(response: dict, type: InvokeType):
+	if type == InvokeType.API:
+		return {
+			"statusCode": 200,
+			"headers": {
+				"Content-Type": "application/json"
+			},
+			"body": json.dumps(response)
+		}
+	elif type == InvokeType.SNS:
+		sqs_client = SqsClient.get_instance()
+		sqs_client.send_message(json.dumps(response), RESPONSE_QUEUE_URL)
 
 def handler(event, _):
 	logging.info(event)
@@ -112,13 +124,8 @@ def handler(event, _):
 		response = MainResponseDto("error", "", "Could not get request")
 	response = dataclasses.asdict(response)
 	logging.info(f'Response is: {response}')
-	return {
-		"statusCode": 200,
-		"headers": {
-			"Content-Type": "application/json"
-		},
-		"body": json.dumps(response)
-	}
+	
+	return send_response(response, invoke_type)
 
 if __name__ == '__main__':
 	r = main(MainRequestDto('s3://main-video-generator/background_videos/49c5edd626204e5e8f912f34e36546e6.webm', 'confessions'))

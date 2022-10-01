@@ -119,6 +119,26 @@ resource "aws_iam_policy" "lambda_polly" {
 EOF
 }
 
+resource "aws_iam_policy" "lambda_sqs" {
+  count = var.use_lambda && var.use_sns_sqs ? 1 : 0
+  name = "${var.lambda_name}-sqs-policy"
+  description = "SQS policy for lambda"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"sqs:SendMessage"
+			],
+			"Resource": "*"
+		}
+	]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_s3" {
 	count = var.use_s3 && var.use_lambda ? 1 : 0
 	role = aws_iam_role.iam_for_lambda[0].name
@@ -135,6 +155,12 @@ resource "aws_iam_role_policy_attachment" "lambda_polly" {
   count = var.use_lambda ? 1 : 0
   role       = aws_iam_role.iam_for_lambda[0].name
   policy_arn = aws_iam_policy.lambda_polly[0].arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_sqs" {
+  count = var.use_lambda && var.use_sns_sqs ? 1 : 0
+  role       = aws_iam_role.iam_for_lambda[0].name
+  policy_arn = aws_iam_policy.lambda_sqs[0].arn
 }
 
 resource "aws_cloudwatch_log_group" "cw_log_group" {
@@ -159,7 +185,8 @@ resource "aws_lambda_function" "main_lambda" {
   depends_on = [
     aws_iam_role_policy_attachment.lambda_logs[0],
     aws_cloudwatch_log_group.cw_log_group[0],
-	aws_iam_role_policy_attachment.lambda_s3[0]
+	  aws_iam_role_policy_attachment.lambda_s3[0],
+    aws_iam_role_policy_attachment.lambda_polly[0],
   ]
 
   environment {

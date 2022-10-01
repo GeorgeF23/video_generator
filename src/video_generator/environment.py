@@ -33,3 +33,6 @@ def initialize_environment() -> None:
 		logging.getLogger().setLevel(logging.DEBUG)
 	else:
 		logging.basicConfig(level=logging.DEBUG)
+	logging.getLogger('botocore').setLevel(logging.WARNING)
+	logging.getLogger('s3transfer').setLevel(logging.WARNING)
+	

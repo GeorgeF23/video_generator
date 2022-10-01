@@ -6,7 +6,7 @@ from reddit.PostData import PostDataDto
 
 class UnusedPost(FilterProcessor):
 
-    REDDIT_POSTS_INDEX = os.environ.get('REDDIT_POSTS_INDEX')
+    REDDIT_POSTS_INDEX = os.environ.get('REDDIT_POSTS_INDEX', 'reddit_posts')
 
     def run(self) -> List[PostDataDto]:
         es_client = ElasticSearchClient.get_instance()

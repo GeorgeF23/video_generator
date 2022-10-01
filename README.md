@@ -1,6 +1,3 @@
-# Video generator
-The application's goal is to create short videos with a video in the background and a reddit text over it.
-
 ### Table of contents
 - [Video generator](#video-generator)
     + [1.Setup](#1setup)
@@ -13,6 +10,11 @@ The application's goal is to create short videos with a video in the background 
 	+ [3. How it works](#3-how-it-works)
 	+ [4. Environment](#4-environment)
 	+ [5. Deployment](#5-deployment)
+- [Backend](#backend)
+	+ [1. Environment](#1-environment)
+
+# Video generator
+The application's goal is to create short videos with a video in the background and a reddit text over it.
 
 ### 1.Setup
 #### 1.1 Installation
@@ -101,14 +103,16 @@ https://user-images.githubusercontent.com/39678100/192091817-45567c8c-95f5-47c0-
 
 
 ### 4. Environment
-Some environment variables need to be set:
-| Env variable | Description | Example value |
+This module does not contain a .env file in version control because it has some sensitive information (reddit credentials).
+The sensitive information will be placed in an external secrets manager in the future.
+
+| Env variable | Description | Default value |
 | ------------ | ----------- | ------------- |
 | APP_NAME | A name for the application (for reddit api) | Video generator/0.0.1 |
-| REDDIT_CLIENT_ID | From Reddit API | - |
-| REDDIT_SECRET | From Reddit API | - |
-| REDDIT_USERNAME | Username of Reddit account | - |
-| REDDIT_PASSWORD | Password of Reddit account | - |
+| REDDIT_CLIENT_ID | From Reddit API | THIS MUST BE SET |
+| REDDIT_SECRET | From Reddit API | THIS MUST BE SET |
+| REDDIT_USERNAME | Username of Reddit account | THIS MUST BE SET |
+| REDDIT_PASSWORD | Password of Reddit account | THIS MUST BE SET |
 | ELASTIC_HOST | Hostname of elasticsearch (currently disabled) | http://localhost:9200 |
 | REDDIT_POSTS_INDEX | Index where to store used posts | reddits_posts |
 | TMP_DIR | Tmp directory where to store intermediary files | tmp |
@@ -125,7 +129,11 @@ Some environment variables need to be set:
 | BOX_COLOR | The color of the box | black@0.3 |
 | END_TIME_OFFSET | An offset at the final of the video where text is not drawn (in seconds). | 1 |
 | AUDIO_CUT_TIME | How much to cut for the dummy word to not be heard | 0.52 |
-| S3_BUCKET | The default bucket where the resources will be stored | video-generator-bucket |
+| S3_BUCKET | The default bucket where the resources will be stored | main-video-generator |
+| CHARACTERS_MIN_COUNT | The minimum character count of a Reddit post | 200 |
+| CHARACTERS_MAX_COUNT | The maximum character count of a Reddit post | 1500 |
+| POLLY_ENGINE_TYPE | The engine type of polly | neural |
+| POLLY_VOICE_ID | The voice id of polly | Matthew |
 
 ### 5. Deployment
 The application is deployed in AWS using Terraform. The deployment configuration is in the 'deployment' folder.
@@ -139,3 +147,12 @@ To deploy to AWS use the following command:
 ```bash
 ./deployment/terraform/apply.sh
 ```
+
+# Backend
+In the same repo there is also a NestJS application used to control the lambda function.
+
+### 1. Environment
+The required environment variables are already defined in the 'src/backend/.env' file.
+
+### 2. Endpoints
+The endpoints are documented with Swagger and can be accessed at the '/api' endpoint (example: http://localhost:3000/api)

@@ -1,4 +1,4 @@
-.env
+src/video_generator/.env
 tmp/
 __pycache__/
 .terraform/

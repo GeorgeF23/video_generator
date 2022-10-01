@@ -11,7 +11,7 @@ class ElasticSearchClient:
 	instance = None
 	
 	def __init__(self):
-		self.elastic_host = os.environ.get('ELASTIC_HOST')
+		self.elastic_host = os.environ.get('ELASTIC_HOST', 'http://localhost:9200')
 		self.es_client = Elasticsearch(self.elastic_host)
 
 	@staticmethod

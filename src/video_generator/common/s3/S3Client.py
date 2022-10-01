@@ -42,7 +42,7 @@ class S3Client():
 		"""
 		try:
 			if not s3_bucket:
-				s3_bucket = os.environ.get('S3_BUCKET', 'not defined')
+				s3_bucket = os.environ.get('S3_BUCKET', 'main-video-generator')
 			if not s3_key:
 				s3_key = 'tmp/' + local_path.split('/')[-1]
 			logging.debug(f'Uploading file from {local_path} to bucket: {s3_bucket} key: {s3_key}')

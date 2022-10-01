@@ -1,4 +1,6 @@
 {
 "editor.detectIndentation": true,
-"python.analysis.typeCheckingMode": "basic"
+"python.analysis.typeCheckingMode": "basic",
+"typescript.preferences.quoteStyle": "single",
+"javascript.preferences.quoteStyle": "single"
 }

@@ -1,4 +1,6 @@
 import dataclasses
+from email import message
+import enum
 import json
 import os
 import textwrap
@@ -24,7 +26,10 @@ from common.resources.resources_manager import download_resource
 from common.s3 import S3Client
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
-
+class InvokeType(enum.Enum):
+	UNKNOWN = 0
+	API = 1
+	SNS = 2
 
 def get_post(subreddit: str) -> PostDataDto:
 	try_count = 1
@@ -75,16 +80,32 @@ def main(request: MainRequestDto):
 	
 	return response
 
+def get_http_request(event):
+	request_str = event['body']
+	return json.loads(request_str)
+
+def get_sns_request(event):
+	message = event['Records'][0]['Sns']['Message']
+	return json.loads(message)
+
+def get_request(event):
+	if 'body' in event:
+		logging.info('Invoked by API')
+		return get_http_request(event), InvokeType.API
+	elif 'Records' in event:
+		logging.info('Invoked by SNS')
+		return get_sns_request(event), InvokeType.SNS
+	else:
+		return None, InvokeType.UNKNOWN
+
+def send_response(response: MainResponseDto, type: InvokeType):
+	pass
+
 def handler(event, _):
 	logging.info(event)
-	request = None
 	response = None
-	if 'body' in event:
-		logging.info(f'Invoked by API')
-		request_str = event['body']
-		request_dict = json.loads(request_str)
-		request = MainRequestDto(**request_dict)
-
+	request, invoke_type = get_request(event)
+	
 	if request:
 		response = main(request)
 	else:
